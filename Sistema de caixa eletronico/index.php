@@ -37,5 +37,40 @@
     <p>Conta: <?php echo $user['conta']; ?></p>
     <p>Saldo: R$ <?php echo $user['saldo']; ?></p>
     <a href="./sair.php">Sair</a>
+    <hr>
+    <br><br>
+    <h3>Movimentação/Extrato</h3>
+    <br>
+    <a href="./operacao.php">Caixa Eletrônico - BDF</a><br><br>
+    <table width="400" border="1">
+        <tr>
+            <th>Data</th>
+            <th>Valor</th>
+        </tr>
+            <?php 
+                $sql = $pdo->prepare("SELECT * FROM historico WHERE id_conta = :id");
+                $sql->bindValue(":id", $id);
+                $sql->execute();
+
+                if($sql->rowCount() > 0){
+                    foreach($sql->fetchAll() as $item){
+                        ?>
+                        <tr>
+                            <td><?php echo date('d/m/Y H:i', strtotime($item['data_operacao'])); ?></td>
+                            <td>
+                                <?php
+                                    if($item['tipo'] == 0): ?>
+                                        <span style="color: green;">R$ <?php echo $item['valor']; ?></span>
+                                    <?php else: ?>
+                                        <span style="color: red;">- R$ <?php echo $item['valor']; ?></span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                }
+            ?>
+        
+    </table>
 </body>
 </html>
